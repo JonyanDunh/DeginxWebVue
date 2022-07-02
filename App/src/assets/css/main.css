@@ -1,0 +1,25 @@
+
+
+
+
+
+
+
+
+
+
+.content .right-content iframe {
+    height: 100%;
+    width: 100%;
+}
+
+.content .left-menu {
+    height: 100%;
+    padding: 0px 10px 10px 10px;
+    float: left;
+}
+
+.content .left-menu .menu {
+    height: 100%;
+}
+
