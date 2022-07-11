@@ -3,15 +3,19 @@ import axios from 'axios';
 export default {
   methods: {
     submitForm() {
-      let formData = new FormData(document.getElementById("loginForm"));
-      console.log(formData)
-      axios.post('http://www.s2.deginx.com:8000/api/accounts/login/', formData)
-        .then((res) => {
-          console.log(res) //返回的数据
+
+
+const paramsList = new URLSearchParams(new FormData(document.getElementById("loginForm")))
+axios.post('http://127.0.0.1:8000/api/account/login/', paramsList, {
+         headers: { 'content-type': 'application/x-www-form-urlencoded' }
+     }).then((res) => {
+          console.log(res.data) //返回的数据
         })
         .catch((err) => {
-          console.log(err) //错误信息
+          console.log(err.response.data) //错误信息
         })
+
+
     }
   }
 }
