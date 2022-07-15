@@ -12,8 +12,6 @@ export default {
             this.LeftMenuItems=Items
         });
     }
-
-
 }
 
 </script>
@@ -21,9 +19,9 @@ export default {
 <template>
     <div class="sm:w-72 w-full">
         <ul id="menu" class="menu  md:flex bg-base-100 sm:w-72  w-full  p-2 rounded-lg  ">
-            <li v-for="item in LeftMenuItems">
+            <li  v-for="item in LeftMenuItems">
                 <a>
-                    <span v-html="item.ItemIcon"></span>
+                    <!-- <span v-html="item.ItemIcon"></span> -->
                     {{ item.ItemName }}
                 </a>
             </li>

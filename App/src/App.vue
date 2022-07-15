@@ -14,7 +14,7 @@ import { createApp } from 'vue'
   <div id="header" class="header w-full p-4">
     <Navbar ></Navbar>
   </div>
-  <div style="top:105px;justify-content: ;"
+  <div style="top:100px;justify-content: ;"
     class=" content w-full flex absolute bottom-0  p-4 pt-0 flex-wrap sm:flex-nowrap">
     <div class="hidden sm:block">
     <Leftmenu ref="menu" class="sm:mr-4"></Leftmenu>

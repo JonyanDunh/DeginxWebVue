@@ -24,8 +24,7 @@ let windowHeight = parseInt(window.innerHeight)
 </style>
 <template>
     <div id="content" @load="SetTop"
-        class=" sm:static sm:w-full absolute bottom-4 left-4 right-4 right-content  overflow-auto rounded-lg">
-        <!-- <iframe class="radius8" src="frame.html"></iframe> -->
+        class=" sm:static sm:w-full  absolute bottom-4 left-4 right-4 right-content  overflow-auto rounded-lg" style="margin:-0.5rem ;">
         <RouterView></RouterView>
     </div>
 </template>

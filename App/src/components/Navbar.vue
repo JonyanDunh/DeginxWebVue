@@ -42,7 +42,7 @@ export default {
           break;
         case 2:
           this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/login/out')
-          this.items = [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }]
+          this.AvatarMenuItems = [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }]
           this.AvatarUrl = "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
           this.$cookies.set("is_login",false)
           this.$router.push('/login')
@@ -54,6 +54,9 @@ export default {
     },
     tologin: function () {
       this.$router.push('/console')
+    },
+    totools:function () {
+      this.$router.push('/tools')
     }
   }
 
@@ -76,7 +79,8 @@ export default {
       </label>
     </div>
     <div class="flex-1">
-      <a class="btn btn-ghost normal-case text-xl">DeginX</a>
+
+      <a class="btn btn-ghost normal-case text-xl ">DeginX</a>
     </div>
     <div class="flex-none gap-2">
       <button class="btn btn-ghost btn-circle">
@@ -89,7 +93,7 @@ export default {
       <button v-on:click="toindex" class="btn btn-active btn-ghost hidden sm:block">
         主页
       </button>
-      <button class="btn btn-ghost hidden sm:block">工具</button>
+      <button v-on:click="totools" class="btn btn-ghost hidden sm:block">工具</button>
       <button class="btn btn-ghost hidden sm:block">插件</button>
       <button class="btn btn-ghost hidden sm:block">开放平台</button>
       <button class="btn btn-ghost hidden sm:block">文档</button>
