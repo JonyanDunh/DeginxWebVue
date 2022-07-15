@@ -6,7 +6,7 @@ export default {
   data() {
     return {
       items: [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }],
-      AvatarUrl: "http://api.btstu.cn/sjtx/api.php?lx=c1&format=images"
+      AvatarUrl: "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
     }
   },
   mounted() {
@@ -43,7 +43,7 @@ export default {
         case 2:
           this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/login/out')
           this.items = [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }]
-          this.AvatarUrl = "http://api.btstu.cn/sjtx/api.php?lx=c1&format=images"
+          this.AvatarUrl = "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
           this.$cookies.set("is_login",false)
           this.$router.push('/login')
           break;

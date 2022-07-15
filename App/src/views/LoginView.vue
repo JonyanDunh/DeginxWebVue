@@ -46,7 +46,7 @@ export default {
               <label class="label">
                 <span class="label-text">Password</span>
               </label>
-              <input name="password" id="password" v-model="password" type="text" placeholder="password"
+              <input name="password" id="password" v-model="password" type="password" placeholder="password"
                 class="input input-bordered" />
               <label class="label">
                 <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
