@@ -89,7 +89,10 @@ export default {
       <button v-on:click="toindex" class="btn btn-active btn-ghost hidden sm:block">
         主页
       </button>
-      <button class="btn btn-ghost hidden sm:block">博客</button>
+      <button class="btn btn-ghost hidden sm:block">工具</button>
+      <button class="btn btn-ghost hidden sm:block">插件</button>
+      <button class="btn btn-ghost hidden sm:block">开放平台</button>
+      <button class="btn btn-ghost hidden sm:block">文档</button>
       <button class="btn btn-ghost hidden sm:block">关于</button>
       <button class="btn btn-ghost btn-circle hidden sm:block">
         <div class="indicator">
