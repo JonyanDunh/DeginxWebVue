@@ -5,13 +5,13 @@ export default {
 
   data() {
     return {
-      items: [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }],
+      AvatarMenuItems: [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }],
       AvatarUrl: "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
     }
   },
   mounted() {
     PubSub.subscribe('LoginSuccess', () => {
-      this.items = [{ ItemName: this.$GLOBAL.user.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
+      this.AvatarMenuItems = [{ ItemName: this.$GLOBAL.user.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
       this.AvatarUrl = this.$GLOBAL.user.avatar
       this.$cookies.set("is_login",true)
 
@@ -19,7 +19,7 @@ export default {
     this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/user/')
       .then((res) => {
         this.$GLOBAL.user = res.data.data
-        this.items = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
+        this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
         this.AvatarUrl = res.data.data.avatar
         this.$cookies.set("is_login",true)
       })
@@ -115,7 +115,7 @@ export default {
         </label>
         <ul tabindex="0" id="AvatarMenu"
           class="mt-3 p-2 text-black shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-          <li v-for="item in items">
+          <li v-for="item in AvatarMenuItems">
             <a :key="item.ItemKey" @click="ItemAction(item.ItemKey)">{{ item.ItemName }}</a>
           </li>
         </ul>
