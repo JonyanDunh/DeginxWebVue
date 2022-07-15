@@ -1,25 +1,27 @@
 <script>
-import axios from 'axios';
+import PubSub from 'pubsub-js'
+
 export default {
+  mounted() {
+
+  },
   methods: {
     submitForm() {
-
-
-const paramsList = new URLSearchParams(new FormData(document.getElementById("loginForm")))
-axios.post('http://127.0.0.1:8000/api/account/login/', paramsList, {
-         headers: { 'content-type': 'application/x-www-form-urlencoded' }
-     }).then((res) => {
-          console.log(res.data) //返回的数据
-        })
+      const paramsList = new URLSearchParams(new FormData(document.getElementById("loginForm")))
+      this.$GLOBAL.axios.post('http://127.0.0.1:8000/api/account/login/', paramsList, {
+        headers: { 'content-type': 'application/x-www-form-urlencoded' }
+      }).then((res) => {
+        this.$GLOBAL.user = res.data.data
+        PubSub.publish('LoginSuccess');
+        this.$cookies.set("is_login",true)
+        this.$router.push('/console')
+      })
         .catch((err) => {
           console.log(err.response.data) //错误信息
         })
-
-
     }
   }
 }
-
 </script>
 
 <template>

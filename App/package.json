@@ -8,7 +8,13 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "axios-cookiejar-support": "^4.0.2",
+    "mitt": "^3.0.0",
+    "pubsub-js": "^1.9.4",
+    "tough-cookie": "^4.0.0",
     "vue": "^3.2.37",
+    "vue-cookie": "^1.1.4",
+    "vue-cookies": "^1.8.1",
     "vue-router": "^4.0.16"
   },
   "devDependencies": {
