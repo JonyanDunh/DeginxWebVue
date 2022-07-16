@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import WelcomeView from '../views/WelcomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import ConsoleView from '../views/ConsoleView.vue'
-import ToolsView from '../views/ToolsView.vue'
+import WelcomeView from '../views/Welcome/WelcomeView.vue'
+import LoginView from '../views/User/LoginView.vue'
+import ConsoleView from '../views/Console/ConsoleView.vue'
+import ToolsView from '../views/Tools/ToolsView.vue'
 import VueCookies from 'vue-cookies'
 import axios from 'axios';
 axios.defaults.crossDomain = true;

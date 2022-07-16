@@ -1,5 +1,4 @@
 <script>
-
 import axios from 'axios';
 axios.defaults.crossDomain = true;
 axios.defaults.withCredentials  = true;

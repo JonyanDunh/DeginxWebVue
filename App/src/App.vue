@@ -1,7 +1,7 @@
 <script setup>
-import Navbar from '@/components/Navbar.vue'
-import Leftmenu from '@/components/Leftmenu.vue'
-import Rightcontent from '@/components/Rightcontent.vue'
+import Navbar from '@/components/Global/Navbar.vue'
+import Leftmenu from '@/components/Global/Leftmenu.vue'
+import Rightcontent from '@/components/Global/Rightcontent.vue'
 import { createApp } from 'vue'
 
 
