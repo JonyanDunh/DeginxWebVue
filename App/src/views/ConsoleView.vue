@@ -3,6 +3,7 @@ import PubSub from 'pubsub-js'
 
 export default {
   mounted() {
+    PubSub.publish('ChangeButtonStauts', "Console");
     PubSub.publish('ChangeLeftMenu', [
       {
         ItemName: "我的收藏",

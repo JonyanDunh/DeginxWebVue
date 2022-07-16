@@ -4,7 +4,7 @@ export default {
     mounted() {
         PubSub.publish('ChangeLeftMenu', [
             {
-                ItemName: "热门",
+                ItemName: "所有",
                 ItemKey: 0
             },
             {
@@ -27,8 +27,11 @@ export default {
                 ItemName: "大数据",
                 ItemKey: 5
             }]);
+        PubSub.publish('ChangeButtonStauts', "Tools");
+        PubSub.publish('ChangeLeftMenuItemStauts', 0);
     },
-        data() {
+
+    data() {
         return {
             ToolsItems: [
                 {
@@ -45,7 +48,7 @@ export default {
                     ItemName: "Bilibili透明头像上传",
                     ItemImg: "https://media.sketchfab.com/models/2dbf7c52ea6a4d6c832897eea98d5467/thumbnails/a9e69fc4a33e41998513848db9feeda8/b5c6e3d229ec41a7b58d34c015aa9e50.jpeg",
                     ItemDescrible: "懂的都懂,叔叔把动态头像封了,透明/半透明头像总不会不给吧"
-                },{
+                }, {
                     ItemName: "SSL泛域名证书生成",
                     ItemImg: "https://codebriefly.com/wp-content/uploads/2019/02/lets-encrypt.jpg",
                     ItemDescrible: "在线生成Let's Encrypt的SSL泛域名证书,最多可支持48个域名共用一个证书"
@@ -64,22 +67,22 @@ export default {
 <template>
 
 
-    <div  class="flex flex-wrap justify-start">
-    <div v-for="item in ToolsItems">
-        <div class="card  w-72 bg-base-100 m-2">
-            <figure >
-                <img :src="item.ItemImg" >
-            </figure>
-            <div class="card-body">
-                <h2 class="card-title">{{ item.ItemName }}</h2>
-                <p style="overflow:scroll" class="h-20">{{ item.ItemDescrible }}</p>
-                <div class="card-actions justify-end">
-                    <button class="btn btn-primary">立即使用</button>
+    <div class="flex flex-wrap justify-start">
+        <div v-for="item in ToolsItems">
+            <div class="card rounded-lg  w-72 bg-base-100 m-2">
+                <figure>
+                    <img :src="item.ItemImg">
+                </figure>
+                <div class="card-body">
+                    <h2 class="card-title">{{ item.ItemName }}</h2>
+                    <p style="overflow:scroll" class="h-20">{{ item.ItemDescrible }}</p>
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-primary">立即使用</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+        </div>
 
     </div>
 

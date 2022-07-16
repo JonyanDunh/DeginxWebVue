@@ -1,19 +1,77 @@
 <script>
 import PubSub from 'pubsub-js'
+import { onMounted, ref } from 'vue'
+
+
 
 export default {
 
+  setup() {
+    const IndexButton = ref(null) //核心
+    const ToolsButton = ref(null) //核心
+    const PluginButton = ref(null) //核心
+    const OpenPlatformButton = ref(null) //核心
+    const DocumentButton = ref(null) //核心
+    const ConsoleButton = ref(null) //核心
+    
+    onMounted(() => {
+
+      
+    })
+
+    return {
+      IndexButton,
+      ToolsButton,
+      PluginButton,
+      OpenPlatformButton,
+      DocumentButton,
+      ConsoleButton
+    }
+  },
   data() {
     return {
+      beforeTarget: {},
       AvatarMenuItems: [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }],
       AvatarUrl: "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
     }
   },
+
   mounted() {
+    PubSub.subscribe('ChangeButtonStauts', (msg, page) => {
+
+      switch (page) {
+        case "Index":
+          this.IndexButton.classList.add("btn-active");
+          this.beforeTarget = this.IndexButton;
+          break;
+        case "Tools":
+          this.ToolsButton.classList.add("btn-active");
+          this.beforeTarget = this.ToolsButton;
+          break;
+        case "Plugin":
+          this.PluginButton.classList.add("btn-active");
+          this.beforeTarget = this.PluginButton;
+          break;
+        case "OpenPlatform":
+          this.OpenPlatformButton.classList.add("btn-active");
+          this.beforeTarget = this.OpenPlatformButton;
+          break;
+        case "Document":
+          this.DocumentButton.classList.add("btn-active");
+          this.beforeTarget = this.DocumentButton;
+          break;
+        case "Console":
+          this.ConsoleButton.classList.add("btn-active");
+          this.beforeTarget = this.ConsoleButton;
+          break;
+
+      }
+
+    });
     PubSub.subscribe('LoginSuccess', () => {
       this.AvatarMenuItems = [{ ItemName: this.$GLOBAL.user.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
       this.AvatarUrl = this.$GLOBAL.user.avatar
-      this.$cookies.set("is_login",true)
+      this.$cookies.set("is_login", true)
 
     });
     this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/user/')
@@ -21,11 +79,11 @@ export default {
         this.$GLOBAL.user = res.data.data
         this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
         this.AvatarUrl = res.data.data.avatar
-        this.$cookies.set("is_login",true)
+        this.$cookies.set("is_login", true)
       })
       .catch((err) => {
         if (err.response.data.code == 401) {
-          this.$cookies.set("is_login",false)
+          this.$cookies.set("is_login", false)
           console.log(err.response.data.data)
         } else {
           console.log(err.response.data)
@@ -35,6 +93,21 @@ export default {
   },
 
   methods: {
+    selectTime(e) {
+      //给点击选中的按钮添加选中效果
+      console.log(e.currentTarget)
+      e.currentTarget.classList.add("btn-active");
+      //判断是否重复点击
+      if (e.currentTarget !== this.beforeTarget) {
+        //判断，若为第一次点击，则不进行修改
+        if (Object.keys(this.beforeTarget).length > 0) {
+
+          this.beforeTarget.classList.remove("btn-active");
+        }
+        //将上次点击的按钮存储
+        this.beforeTarget = e.currentTarget;
+      }
+    },
     ItemAction(item) {
       switch (item) {
         case 1:
@@ -44,7 +117,7 @@ export default {
           this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/login/out')
           this.AvatarMenuItems = [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }]
           this.AvatarUrl = "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
-          this.$cookies.set("is_login",false)
+          this.$cookies.set("is_login", false)
           this.$router.push('/login')
           break;
       }
@@ -52,10 +125,10 @@ export default {
     toindex: function () {
       this.$router.push('/')
     },
-    tologin: function () {
+    toconsole: function () {
       this.$router.push('/console')
     },
-    totools:function () {
+    totools: function () {
       this.$router.push('/tools')
     }
   }
@@ -90,15 +163,16 @@ export default {
         </svg>
       </button>
 
-      <button v-on:click="toindex" class="btn btn-active btn-ghost hidden sm:block">
+      <button @click="selectTime($event)" v-on:click="toindex" ref="IndexButton" class="btn  btn-ghost hidden sm:block">
         主页
       </button>
-      <button v-on:click="totools" class="btn btn-ghost hidden sm:block">工具</button>
-      <button class="btn btn-ghost hidden sm:block">插件</button>
-      <button class="btn btn-ghost hidden sm:block">开放平台</button>
-      <button class="btn btn-ghost hidden sm:block">文档</button>
-      <button class="btn btn-ghost hidden sm:block">关于</button>
-      <button class="btn btn-ghost btn-circle hidden sm:block">
+      <button @click="selectTime($event)" v-on:click="totools" ref="ToolsButton"
+        class="btn btn-ghost hidden sm:block">工具</button>
+      <button @click="selectTime($event)" ref="PluginButton" class="btn btn-ghost hidden sm:block">插件</button>
+      <button @click="selectTime($event)" ref="OpenPlatformButton" class="btn btn-ghost hidden sm:block">开放平台</button>
+      <button @click="selectTime($event)" ref="DocumentButton" class="btn btn-ghost hidden sm:block">文档</button>
+      <button @click="selectTime($event)" ref="AboutButton" class="btn btn-ghost hidden sm:block">关于</button>
+      <!--       <button class="btn btn-ghost btn-circle hidden sm:block">
         <div class="indicator">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -106,8 +180,8 @@ export default {
           </svg>
           <span class="badge badge-xs badge-primary indicator-item"></span>
         </div>
-      </button>
-      <button v-on:click="tologin" class="btn btn-accent">
+      </button> -->
+      <button @click="selectTime($event)" ref="ConsoleButton" v-on:click="toconsole" class="btn btn-accent">
         控制台
       </button>
 
