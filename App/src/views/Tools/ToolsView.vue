@@ -1,64 +1,49 @@
 <script>
 import PubSub from 'pubsub-js'
+var Type2Name={all:"所有",Programmer:"程序员",VideoWebSite:"视频网站",Other:"其他"}
+
 export default {
+    
     mounted() {
-        PubSub.publish('ChangeLeftMenu', [
-            {
-                ItemName: "所有",
-                ItemKey: 0
-            },
-            {
-                ItemName: "程序员",
-                ItemKey: 1
-            },
-            {
-                ItemName: "游戏",
-                ItemKey: 2
-            },
-            {
-                ItemName: "人工智能",
-                ItemKey: 3
-            },
-            {
-                ItemName: "区块链",
-                ItemKey: 4
-            },
-            {
-                ItemName: "大数据",
-                ItemKey: 5
-            }]);
+        try {
+            this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/tools/get')
+                .then((res) => {
+                    this.ToolsItems["all"] = []
+                    for (var data of res.data.data) {
+                        this.ToolsItems["all"].push(data["map"])
+                        if (this.ToolsItems[data["map"]["ItemType"]] == null)
+                            this.ToolsItems[data["map"]["ItemType"]] = [];
+                        this.ToolsItems[data["map"]["ItemType"]].push(data["map"])
+                    }
+                    var times=0;
+                    var LeftMenu=[];
+                    for(var data in this.ToolsItems){
+                           LeftMenu.push({ItemName:Type2Name[data],ItemKey:times,ItemType:data,ItemChildAmount:this.ToolsItems[data].length}) 
+
+                    }
+                    PubSub.publish('ChangeLeftMenu',LeftMenu );
+                    PubSub.publish('ChangeLeftMenuItemStauts', 0);
+                    })
+                .catch((err) => {
+                    console.log(err)
+                })
+        } catch (err) {
+            //处理错误
+        }
+        
         PubSub.publish('ChangeButtonStauts', "Tools");
-        PubSub.publish('ChangeLeftMenuItemStauts', 0);
+        
+        PubSub.subscribe('ChangeToolsView', (msg, ItemType) => {
+            
+           this.ItemType=ItemType
+            
+        });
     },
 
     data() {
         return {
-            ToolsItems: [
-                {
-                    ItemName: "Websocket中转站",
-                    ItemImg: "https://message.biliimg.com/bfs/im/d55898984e3ed5949e3d083e65228b43579683be.png",
-                    ItemDescrible: "提供Websocket打洞服务,支持多方订阅多方消息发送"
-                },
-                {
-                    ItemName: "Covid-19趋势预测",
-                    ItemImg: "https://th.bing.com/th/id/R.814b05d8d6baac36f24c9a8428cdaefc?rik=ENv5akS8shlHpA&riu=http%3a%2f%2fcidoc.mini.icom.museum%2fwp-content%2fuploads%2fsites%2f6%2f2020%2f05%2f200309-D-HN545-003.jpg&ehk=MxhRzMDEBNKgToe9asbuVKWDoQxJhbeJjKhOC27MZ5I%3d&risl=&pid=ImgRaw&r=0",
-                    ItemDescrible: "基于深度学习的疫情预测,模型数据来自国家卫健委"
-                },
-                {
-                    ItemName: "Bilibili透明头像上传",
-                    ItemImg: "https://media.sketchfab.com/models/2dbf7c52ea6a4d6c832897eea98d5467/thumbnails/a9e69fc4a33e41998513848db9feeda8/b5c6e3d229ec41a7b58d34c015aa9e50.jpeg",
-                    ItemDescrible: "懂的都懂,叔叔把动态头像封了,透明/半透明头像总不会不给吧"
-                }, {
-                    ItemName: "SSL泛域名证书生成",
-                    ItemImg: "https://codebriefly.com/wp-content/uploads/2019/02/lets-encrypt.jpg",
-                    ItemDescrible: "在线生成Let's Encrypt的SSL泛域名证书,最多可支持48个域名共用一个证书"
-                },
-                {
-                    ItemName: "Youtube视频分享",
-                    ItemImg: "https://ifa2019warsaw.com/wp-content/uploads/2020/08/6.jpg",
-                    ItemDescrible: "一键把Youtube视频分享到QQ空间、微博、哔哩哔哩、朋友圈"
-                },
-            ]
+            ToolsItems: {},
+            ItemType:"all"
         }
     },
 }
@@ -67,17 +52,17 @@ export default {
 <template>
 
 
-    <div class="flex flex-wrap justify-start">
-        <div v-for="item in ToolsItems">
-            <div class="card rounded-lg  w-72 bg-base-100 m-2">
+    <div class="flex flex-wrap justify-center sm:justify-start">
+        <div v-for="item in ToolsItems[ItemType]">
+            <div class="card rounded-lg w-auto sm:w-72 bg-base-100 m-2">
                 <figure>
                     <img :src="item.ItemImg">
                 </figure>
                 <div class="card-body">
                     <h2 class="card-title">{{ item.ItemName }}</h2>
-                    <p style="overflow:scroll" class="h-20">{{ item.ItemDescrible }}</p>
+                    <p style="overflow:scroll" class="h-20">{{ item.ItemDescribe }}</p>
                     <div class="card-actions justify-end">
-                        <button class="btn btn-primary">立即使用</button>
+                        <button :disabled='item.disabled' class="btn  btn-primary">立即使用</button>
                     </div>
                 </div>
             </div>

@@ -13,10 +13,10 @@ export default {
     const OpenPlatformButton = ref(null) //核心
     const DocumentButton = ref(null) //核心
     const ConsoleButton = ref(null) //核心
-    
+
     onMounted(() => {
 
-      
+
     })
 
     return {
@@ -74,22 +74,26 @@ export default {
       this.$cookies.set("is_login", true)
 
     });
-    this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/user/')
-      .then((res) => {
-        this.$GLOBAL.user = res.data.data
-        this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
-        this.AvatarUrl = res.data.data.avatar
-        this.$cookies.set("is_login", true)
-      })
-      .catch((err) => {
-        if (err.response.data.code == 401) {
-          this.$cookies.set("is_login", false)
-          console.log(err.response.data.data)
-        } else {
-          console.log(err.response.data)
+    try {
+      this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/user/')
+        .then((res) => {
+          this.$GLOBAL.user = res.data.data
+          this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
+          this.AvatarUrl = res.data.data.avatar
+          this.$cookies.set("is_login", true)
+        })
+        .catch((err) => {
+          if (err.response.data.code == 401) {
+            this.$cookies.set("is_login", false)
+            console.log(err.response.data.data)
+          } else {
+            console.log(err.response.data)
 
-        }
-      })
+          }
+        })
+    } catch (err) {
+      //处理错误
+    }
   },
 
   methods: {
