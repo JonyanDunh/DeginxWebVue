@@ -3,7 +3,9 @@ import WelcomeView from '../views/Welcome/WelcomeView.vue'
 import LoginView from '../views/User/LoginView.vue'
 import ConsoleView from '../views/Console/ConsoleView.vue'
 import ToolsView from '../views/Tools/ToolsView.vue'
+import ToolsItem from '../views/Tools/ToolsItem.vue'
 import VueCookies from 'vue-cookies'
+import BilibiliLiveDynamicCover from '../views/Tools/SubPage/ae6d6050-5de5-40f2-8350-52532e6afbe2.vue'
 import axios from 'axios';
 axios.defaults.crossDomain = true;
 axios.defaults.withCredentials = true;
@@ -30,6 +32,12 @@ const router = createRouter({
       name: 'tools',
       component: ToolsView,
       meta: { transition: 'slide-right'}
+    }, {
+      path: '/tools/ae6d6050-5de5-40f2-8350-52532e6afbe2',
+      name: 'BilibiliLiveDynamicCover',
+      component: BilibiliLiveDynamicCover,
+      meta: { transition: 'slide-right'}
+
     }
   ],
 })

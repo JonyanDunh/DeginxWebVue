@@ -160,22 +160,22 @@ export default {
       <a class="btn btn-ghost normal-case text-xl ">DeginX</a>
     </div>
     <div class="flex-none gap-2">
-      <button class="btn btn-ghost btn-circle">
+      <button class="btn btn-ghost btn-circle hidden">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </button>
 
-      <button @click="selectTime($event)" v-on:click="toindex" ref="IndexButton" class="btn  btn-ghost hidden sm:block">
+      <button @click="selectTime($event)" v-on:click="toindex" ref="IndexButton" class="btn  btn-ghost hidden ">
         主页
       </button>
       <button @click="selectTime($event)" v-on:click="totools" ref="ToolsButton"
         class="btn btn-ghost hidden sm:block">工具</button>
-      <button @click="selectTime($event)" ref="PluginButton" class="btn btn-ghost hidden sm:block">插件</button>
-      <button @click="selectTime($event)" ref="OpenPlatformButton" class="btn btn-ghost hidden sm:block">开放平台</button>
+      <button @click="selectTime($event)" ref="PluginButton" class="btn btn-ghost hidden ">插件</button>
+      <button @click="selectTime($event)" ref="OpenPlatformButton" class="btn btn-ghost hidden ">开放平台</button>
       <button @click="selectTime($event)" ref="DocumentButton" class="btn btn-ghost hidden sm:block">文档</button>
-      <button @click="selectTime($event)" ref="AboutButton" class="btn btn-ghost hidden sm:block">关于</button>
+      <button @click="selectTime($event)" ref="AboutButton" class="btn btn-ghost hidden ">关于</button>
       <!--       <button class="btn btn-ghost btn-circle hidden sm:block">
         <div class="indicator">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -185,7 +185,7 @@ export default {
           <span class="badge badge-xs badge-primary indicator-item"></span>
         </div>
       </button> -->
-      <button @click="selectTime($event)" ref="ConsoleButton" v-on:click="toconsole" class="btn btn-accent">
+      <button @click="selectTime($event)" ref="ConsoleButton" v-on:click="toconsole" class="btn btn-accent hidden">
         控制台
       </button>
 
