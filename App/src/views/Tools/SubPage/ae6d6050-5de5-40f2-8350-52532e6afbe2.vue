@@ -37,7 +37,7 @@ export default {
                     items-center justify-center">
 
 
-                        <div class="card w-full h-full max-w-lg bg-base-100  shadow-xl rounded-lg ">
+                        <div class="card w-full h-full max-w-lg bg-base-100 hidden shadow-xl rounded-lg ">
 
                             <div class="card-body">
                                 <label class="label">
@@ -91,7 +91,7 @@ export default {
 
                         </div>
 
-                        <div class="card w-full h-full max-w-lg  bg-base-100 hidden  shadow-xl rounded-lg ">
+                        <div class="card w-full h-full max-w-lg  bg-base-100   shadow-xl rounded-lg ">
 
                             <div class="card-body">
 
@@ -129,6 +129,11 @@ export default {
                                     <div class="stat">
                                         <div class="stat-title">硬币数</div>
                                         <div class="stat-value text-error">500K</div>
+
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-title">稿件数</div>
+                                        <div class="stat-value text-info">127</div>
 
                                     </div>
                                     <div class="stat">
@@ -190,15 +195,15 @@ export default {
                                     <div class="form-control">
                                         <label class="cursor-pointer label">
                                             <span class="label-text">花费2枚硬币</span>
-                                            <input checked="checked" class="checkbox checkbox-accent" />
+                                            <input type="checkbox" class="checkbox checkbox-accent" />
                                         </label>
                                         <label class="cursor-pointer label">
                                             <span class="label-text">为up主视频、动态点赞</span>
-                                            <input checked="checked" class="checkbox checkbox-accent" />
+                                            <input type="checkbox" class="checkbox checkbox-accent" />
                                         </label>
                                         <label class="cursor-pointer label">
                                             <span class="label-text">分享到动态</span>
-                                            <input checked="checked" class="checkbox checkbox-accent" />
+                                            <input type="checkbox" class="checkbox checkbox-accent" />
                                         </label>
                                     </div>
                                     <div class="card-actions justify-end">
@@ -228,7 +233,13 @@ export default {
         </div>
 
         <div class="bg-base-100 rounded-lg">
-
+            <div class="hero rounded-lg min-h-full bg-base-100">
+                <div class="hero-content text-center">
+                    <div class="max-w-md">
+                        <h1 class="text-5xl font-bold">这里是文档</h1>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
