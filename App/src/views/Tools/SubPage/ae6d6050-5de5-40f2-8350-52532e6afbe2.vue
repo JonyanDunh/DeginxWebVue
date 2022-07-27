@@ -18,7 +18,23 @@ export default {
                 ItemKey: 2
             }]);
         PubSub.publish('ChangeLeftMenuItemStauts', 0);
+    },
+    methods: {
+        submitBILIForm() {
+
+            const paramsList = new URLSearchParams(new FormData(document.getElementById("BILIloginForm")))
+            
+            
+
+            this.$GLOBAL.axios.get('/x/web-interface/nav').then((res) => {
+                console.log(res.data)
+            })
+                .catch((err) => {
+                    console.log(err.response.data) //错误信息
+                })
+        }
     }
+
 
 
 }
@@ -37,7 +53,7 @@ export default {
                     items-center justify-center">
 
 
-                        <div class="card w-full h-full max-w-lg bg-base-100 hidden shadow-xl rounded-lg ">
+                        <div class="card w-full h-full max-w-lg bg-base-100  shadow-xl rounded-lg ">
 
                             <div class="card-body">
                                 <label class="label">
@@ -52,29 +68,6 @@ export default {
                                         src="https://message.biliimg.com/bfs/im/d3c0c832c1d51183c85d64ca9767999f8108952a.png"
                                         alt="Shoes" />
                                 </div>
-
-                                <label class="label">
-                                    <span class="label-text">Cookie登录</span>
-                                </label>
-                                <input type="text" placeholder="bili_jct"
-                                    class="input input-bordered input-info w-full " />
-                                <input type="text" placeholder="SESSDATA"
-                                    class="input input-bordered input-info w-full " />
-                                <div class="form-control">
-                                    <label class="cursor-pointer label">
-                                        <span class="label-text">保存Cookie到浏览器</span>
-                                        <input type="checkbox" class="checkbox checkbox-accent" />
-                                    </label>
-                                    <label class="cursor-pointer label">
-                                        <span class="label-text">同意本站服务条款、隐私政策</span>
-                                        <input type="checkbox" class="checkbox checkbox-accent" />
-                                    </label>
-                                    <label class="cursor-pointer label">
-                                        <span class="label-text">我已知晓本站不会存储任何登录数据，如发生账号泄露与本站无关</span>
-                                        <input type="checkbox" class="checkbox checkbox-accent" />
-                                    </label>
-                                </div>
-                                <button class="btn btn-primary">登录</button>
                                 <div class="alert alert-success shadow-lg rounded-lg mt-2">
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -86,12 +79,40 @@ export default {
                                         <span>二维码扫描成功！</span>
                                     </div>
                                 </div>
+                                <form id="BILIloginForm" @submit.prevent="submitBILIForm">
+                                    <label class="label">
+                                        <span class="label-text">Cookie登录</span>
+                                    </label>
+                                    <input type="text" name="bili_jct" id="bili_jct" v-model="bili_jct"
+                                        placeholder="bili_jct" class="input input-bordered input-info w-full " />
+                                    <input type="text" name="SESSDATA" id="SESSDATA" v-model="SESSDATA"
+                                        placeholder="SESSDATA" class="input input-bordered input-info w-full " />
+                                    <div class="form-control">
+                                        <label class="cursor-pointer label">
+                                            <span class="label-text">保存Cookie到浏览器</span>
+                                            <input type="checkbox" class="checkbox checkbox-accent" />
+                                        </label>
+                                        <label class="cursor-pointer label">
+                                            <span class="label-text">同意本站服务条款、隐私政策</span>
+                                            <input type="checkbox" class="checkbox checkbox-accent" />
+                                        </label>
+                                        <label class="cursor-pointer label">
+                                            <span class="label-text">我已知晓本站不会存储任何登录数据，如发生账号泄露与本站无关</span>
+                                            <input type="checkbox" class="checkbox checkbox-accent" />
+                                        </label>
+                                    </div>
+                                    <div class="form-control mt-6">
+                                        <button class="btn btn-primary ">登录</button>
+                                    </div>
+                                </form>
+
+
                             </div>
 
 
                         </div>
 
-                        <div class="card w-full h-full max-w-lg  bg-base-100   shadow-xl rounded-lg ">
+                        <div class="card w-full h-full max-w-lg  bg-base-100  hidden shadow-xl rounded-lg ">
 
                             <div class="card-body">
 
