@@ -26,7 +26,7 @@ export default {
             
             
 
-            this.$GLOBAL.axios.get('/x/web-interface/nav').then((res) => {
+            this.$GLOBAL.axios.get('/proxy/bilibili/x/web-interface/nav').then((res) => {
                 console.log(res.data)
             })
                 .catch((err) => {
