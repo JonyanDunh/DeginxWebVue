@@ -1,6 +1,8 @@
 <script>
 import PubSub from 'pubsub-js'
-
+import axios from 'axios';
+axios.defaults.crossDomain = true;
+axios.defaults.withCredentials  = true;
 export default {
   mounted() {
  PubSub.publish('ChangeLeftMenu',[
@@ -18,7 +20,7 @@ export default {
   methods: {
     submitForm() {
       const paramsList = new URLSearchParams(new FormData(document.getElementById("loginForm")))
-      this.$GLOBAL.axios.post('http://127.0.0.1:8000/api/account/login/', paramsList, {
+      axios.post('http://127.0.0.1:8000/api/account/login/', paramsList, {
         headers: { 'content-type': 'application/x-www-form-urlencoded' }
       }).then((res) => {
         this.$GLOBAL.user = res.data.data

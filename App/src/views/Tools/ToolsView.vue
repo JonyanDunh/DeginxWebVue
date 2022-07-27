@@ -1,12 +1,14 @@
 <script>
 import PubSub from 'pubsub-js'
 var Type2Name = { all: "所有", Programmer: "程序员", VideoWebSite: "视频网站", Other: "其他" }
-
+import axios from 'axios';
+axios.defaults.crossDomain = true;
+axios.defaults.withCredentials  = true;
 export default {
 
     mounted() {
         try {
-            this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/tools/get')
+            axios.get('http://127.0.0.1:8000/api/tools/get')
                 .then((res) => {
                     this.ToolsItems["all"] = []
                     for (var data of res.data.data) {

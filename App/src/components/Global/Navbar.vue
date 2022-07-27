@@ -1,7 +1,9 @@
 <script>
 import PubSub from 'pubsub-js'
 import { onMounted, ref } from 'vue'
-
+import axios from 'axios';
+axios.defaults.crossDomain = true;
+axios.defaults.withCredentials  = true;
 
 
 export default {
@@ -75,7 +77,7 @@ export default {
 
     });
     try {
-      this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/user/')
+      axios.get('http://127.0.0.1:8000/api/account/user/')
         .then((res) => {
           this.$GLOBAL.user = res.data.data
           this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
@@ -118,7 +120,7 @@ export default {
           this.$router.push('/login')
           break;
         case 2:
-          this.$GLOBAL.axios.get('http://127.0.0.1:8000/api/account/login/out')
+          axios.get('http://127.0.0.1:8000/api/account/login/out')
           this.AvatarMenuItems = [{ ItemName: "Login", ItemKey: 1 }, { ItemName: "Register", ItemKey: 3 }]
           this.AvatarUrl = "https://message.biliimg.com/bfs/im/a0859bbfc2e245ab6b98838051886da9b89e86d8.png"
           this.$cookies.set("is_login", false)

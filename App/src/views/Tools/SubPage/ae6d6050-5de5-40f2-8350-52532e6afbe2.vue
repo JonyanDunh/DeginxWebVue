@@ -1,6 +1,7 @@
 <script>
 import PubSub from 'pubsub-js'
-
+import axios from 'axios';
+axios.defaults.withCredentials  = true;
 export default {
     mounted() {
         PubSub.publish('ChangeButtonStauts', "Index");
@@ -23,10 +24,14 @@ export default {
         submitBILIForm() {
 
             const paramsList = new URLSearchParams(new FormData(document.getElementById("BILIloginForm")))
-            
-            
 
-            this.$GLOBAL.axios.get('/proxy/bilibili/x/web-interface/nav').then((res) => {
+            this.$cookies.set("SESSDATA",decodeURIComponent(new FormData(document.getElementById("BILIloginForm")).get("SESSDATA")))
+            var config = {
+                method: 'get',
+                url: '/proxy/bilibili/x/web-interface/nav'
+            };
+
+            axios.request(config).then((res) => {
                 console.log(res.data)
             })
                 .catch((err) => {
