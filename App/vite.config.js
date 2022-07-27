@@ -29,6 +29,11 @@ export default defineConfig({
         target: 'http://passport.bilibili.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy\/bilibili\/passport/, '')
+      },
+      '/proxy/bilibili/live': {
+        target: 'http://api.live.bilibili.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/proxy\/bilibili\/live/, '')
       }
     }
   }
