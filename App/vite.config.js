@@ -24,6 +24,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy\/bilibili\/member/, '')
       }
+      ,
+      '/proxy/bilibili/passport': {
+        target: 'http://passport.bilibili.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/proxy\/bilibili\/passport/, '')
+      }
     }
   }
 })

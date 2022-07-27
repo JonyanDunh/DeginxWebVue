@@ -1,6 +1,8 @@
 <script>
 import PubSub from 'pubsub-js'
 import axios from 'axios';
+import QrcodeVue from 'qrcode.vue'
+
 
 axios.defaults.withCredentials = true;
 
@@ -15,7 +17,23 @@ function base64ToFile(base64, fileName) {
     }
     return new File([ia], fileName, { type: mime });  // 将值抛出去
 }
+function getQueryVariable(query,variable)
+{
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
 export default {
+    data() {
+        return {
+            QrcodeValue: '',
+            ScanSucceed: false,
+            ScanStatusMessage: "请使用哔哩哔哩客户端扫码登录"
+        }
+    },
     mounted() {
         PubSub.publish('ChangeButtonStauts', "Index");
         PubSub.publish('ChangeLeftMenu', [
@@ -32,6 +50,56 @@ export default {
                 ItemKey: 2
             }]);
         PubSub.publish('ChangeLeftMenuItemStauts', 0);
+
+        axios.get('/proxy/bilibili/passport/qrcode/getLoginUrl')
+            .then((res) => {
+
+                this.QrcodeValue = res.data.data.url
+
+                /*var CheckScanStatusID = setInterval(() => {
+
+                    var data = new FormData()
+                    data.append('oauthKey', res.data.data.oauthKey);
+                    const paramsList = new URLSearchParams(data)
+                    var config = {
+                        method: 'post',
+                        url: '/proxy/bilibili/passport/qrcode/getLoginInfo',
+                        data: paramsList,
+                        headers: { 'content-type': 'application/x-www-form-urlencoded' }
+                    };
+
+                    axios.request(config)
+                        .then((res) => {
+                            switch (res.data.data) {
+                                case -4:
+                                    this.ScanStatusMessage = "请使用哔哩哔哩客户端扫码登录";
+                                    break;
+                                case -5:
+                                    this.ScanStatusMessage = "扫码成功,请在手机登录";
+                                    break;
+                            }
+                            if (res.data.status) {
+                                this.ScanSucceed=true
+                                this.ScanStatusMessage = "登录成功！";
+                                clearInterval(CheckScanStatusID)
+                                
+                            }
+                        })
+                        .catch((err) => {
+                            this.ScanStatusMessage = err.response.data.message;
+                            console.log(err.response.data) //错误信息
+                        })
+
+                }, 10000)*/
+                var url="https://passport.biligame.com/crossDomain?DedeUserID=96876893&DedeUserID__ckMd5=71a985607f613ccb&Expires=15551000&SESSDATA=e9de22fb%2C1674469400%2C4c9e6%2A71&bili_jct=2155122a31a5e4c176e877c5214dd24e&gourl=http%3A%2F%2Fwww.bilibili.com"
+                var SESSDATA=getQueryVariable(url,"SESSDATA")
+                var bili_jct=getQueryVariable(url,"bili_jct")
+                console.log(SESSDATA)
+                console.log(bili_jct)
+            })
+            .catch((err) => {
+
+            })
     },
     methods: {
         submitBILIForm() {
@@ -43,14 +111,6 @@ export default {
             bili_jct = '98b58494bc79a89ce81d5373382f52e5'
             this.$cookies.set("SESSDATA", decodeURIComponent(SESSDATA))
             var data = new FormData()
-
-
-
-
-
-
-
-
             data.append('bucket', 'material_up');
             data.append('dir', '');
             data.append('file', base64ToFile("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAADElEQVQImWNgYGAAAAAEAAGjChXjAAAAAElFTkSuQmCC", "test.png"));
@@ -62,19 +122,22 @@ export default {
             };
 
             axios.request(config)
-            .then((res) => {
-                if(res.data.code==0||res.data.code==20414)
-                {
-                    
-                    console.log("登录成功")
-                }
-                console.log(res.data)
-            })
-            .catch((err) => {
+                .then((res) => {
+                    if (res.data.code == 0 || res.data.code == 20414) {
+
+                        console.log("登录成功")
+                    }
+                    console.log(res.data)
+                })
+                .catch((err) => {
                     console.log(err.response.data) //错误信息
                 })
         }
+    },
+    components: {
+        QrcodeVue,
     }
+
 
 
 
@@ -103,30 +166,37 @@ export default {
                                 <label class="label">
                                     <span class="label-text">二维码登录</span>
                                 </label>
-                                <div class="flex flex-col 
-                    items-center justify-center">
-                                    <img style="height: 150px;width:150px ;"
-                                        src="https://message.biliimg.com/bfs/im/d3c0c832c1d51183c85d64ca9767999f8108952a.png"
-                                        alt="Shoes" />
+                                <div class="flex flex-col items-center justify-center">
+                                    <qrcode-vue :value="QrcodeValue" size="150" level="H"></qrcode-vue>
                                 </div>
-                                <div class="alert alert-success shadow-lg rounded-lg mt-2">
+                                <div v-if="!ScanSucceed" class="alert alert-info shadow-lg">
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            class="stroke-current flex-shrink-0 w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>{{ ScanStatusMessage }}</span>
+                                    </div>
+                                </div>
+                                <div v-if="ScanSucceed" class="alert alert-success shadow-lg">
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="stroke-current  flex-shrink-0 h-6 w-6" fill="none"
+                                            class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        <span>二维码扫描成功！</span>
+                                        <span>{{ ScanStatusMessage }}</span>
                                     </div>
                                 </div>
                                 <form id="BILIloginForm" @submit.prevent="submitBILIForm">
                                     <label class="label">
                                         <span class="label-text">Cookie登录</span>
                                     </label>
-                                    <input type="text" name="bili_jct" id="bili_jct" v-model="bili_jct"
+                                    <input type="password" name="bili_jct" id="bili_jct" v-model="bili_jct"
                                         placeholder="bili_jct" class="input input-bordered input-info w-full " />
-                                    <input type="text" name="SESSDATA" id="SESSDATA" v-model="SESSDATA"
+                                    <input type="password" name="SESSDATA" id="SESSDATA" v-model="SESSDATA"
                                         placeholder="SESSDATA" class="input input-bordered input-info w-full " />
                                     <div class="form-control">
                                         <label class="cursor-pointer label">
