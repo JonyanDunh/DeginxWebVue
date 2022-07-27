@@ -13,10 +13,16 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/proxy/bilibili': {
+      '/proxy/bilibili/api': {
         target: 'http://api.bilibili.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/proxy\/bilibili/, '')
+        rewrite: (path) => path.replace(/^\/proxy\/bilibili\/api/, '')
+
+      },
+      '/proxy/bilibili/member': {
+        target: 'http://member.bilibili.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/proxy\/bilibili\/member/, '')
       }
     }
   }

@@ -1,7 +1,20 @@
 <script>
 import PubSub from 'pubsub-js'
 import axios from 'axios';
-axios.defaults.withCredentials  = true;
+
+axios.defaults.withCredentials = true;
+
+function base64ToFile(base64, fileName) {
+    let arr = base64.split(",");
+    let mime = arr[0].match(/:(.*?);/)[1];
+    let bytes = atob(arr[1]);
+    let n = bytes.length;
+    let ia = new Uint8Array(n);
+    while (n--) {
+        ia[n] = bytes.charCodeAt(n);
+    }
+    return new File([ia], fileName, { type: mime });  // 将值抛出去
+}
 export default {
     mounted() {
         PubSub.publish('ChangeButtonStauts', "Index");
@@ -23,18 +36,41 @@ export default {
     methods: {
         submitBILIForm() {
 
-            const paramsList = new URLSearchParams(new FormData(document.getElementById("BILIloginForm")))
 
-            this.$cookies.set("SESSDATA",decodeURIComponent(new FormData(document.getElementById("BILIloginForm")).get("SESSDATA")))
+            var SESSDATA = new FormData(document.getElementById("BILIloginForm")).get("SESSDATA")
+            var bili_jct = new FormData(document.getElementById("BILIloginForm")).get("bili_jct")
+            SESSDATA = '8742238d%2C1674213185%2Cd3332*71'
+            bili_jct = '98b58494bc79a89ce81d5373382f52e5'
+            this.$cookies.set("SESSDATA", decodeURIComponent(SESSDATA))
+            var data = new FormData()
+
+
+
+
+
+
+
+
+            data.append('bucket', 'material_up');
+            data.append('dir', '');
+            data.append('file', base64ToFile("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAADElEQVQImWNgYGAAAAAEAAGjChXjAAAAAElFTkSuQmCC", "test.png"));
+            data.append('csrf', bili_jct);
             var config = {
-                method: 'get',
-                url: '/proxy/bilibili/x/web-interface/nav'
+                method: 'post',
+                url: '/proxy/bilibili/member/x/material/up/upload',
+                data: data
             };
 
-            axios.request(config).then((res) => {
+            axios.request(config)
+            .then((res) => {
+                if(res.data.code==0||res.data.code==20414)
+                {
+                    
+                    console.log("登录成功")
+                }
                 console.log(res.data)
             })
-                .catch((err) => {
+            .catch((err) => {
                     console.log(err.response.data) //错误信息
                 })
         }
