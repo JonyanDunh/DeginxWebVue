@@ -2,7 +2,7 @@
 import PubSub from 'pubsub-js'
 import axios from 'axios';
 import QrcodeVue from 'qrcode.vue'
-
+import { onMounted, ref } from 'vue'
 axios.defaults.crossDomain = true;
 axios.defaults.withCredentials = true;
 
@@ -26,6 +26,20 @@ function getQueryVariable(query, variable) {
     return (false);
 }
 export default {
+    setup() {
+        const ChooseFile = ref(null) //核心
+        const CoverImgDiv = ref(null) //核心
+
+        onMounted(() => {
+
+
+        })
+
+        return {
+            ChooseFile,
+            CoverImgDiv
+        }
+    },
     data() {
         return {
             QrcodeValue: '',
@@ -49,7 +63,12 @@ export default {
             BiliLiveRoomCover: "",
             BiliDynamicCount: null,
             BiliVideoCount: null,
-            MockupCodeContent: ''
+            MockupCodeContent: '',
+            CoverImg: "https://message.biliimg.com/bfs/im/4fda7c6d436290ecd6eec7cb66ff16df50fbb93e.webp",
+            CoverFileName: "",
+            WebCoverImgBase64: "",
+            CoverFile: null
+
         }
     },
     mounted() {
@@ -70,71 +89,75 @@ export default {
                 ItemKey: 2
             }]);
         PubSub.publish('ChangeLeftMenuItemStauts', 0);
-        this.MockupCodeContent += ' <pre data-prefix="$"><code>正在从http://passport.bilibili.com/qrcode/getLoginUrl获取登录二维码</code></pre>'
-        axios.get('/proxy/bilibili/passport/qrcode/getLoginUrl')
-            .then((res) => {
+        if (this.$cookies.get("isLogin2Bili") == "false") {
+            this.MockupCodeContent += ' <pre data-prefix="$"><code>正在从http://passport.bilibili.com/qrcode/getLoginUrl获取登录二维码</code></pre>'
+            axios.get('/proxy/bilibili/passport/qrcode/getLoginUrl')
+                .then((res) => {
 
-                this.QrcodeValue = res.data.data.url
-                this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>登录二维码获取成功</code></pre>'
-                this.MockupCodeContent += ' <pre data-prefix="$"><code>正在从http://passport.bilibili.com/qrcode/getLoginInfo获取扫码状态...</code></pre>'
-                this.MockupCodeContent += ' <pre data-prefix="$"><code>请使用哔哩哔哩客户端扫码登录</code></pre>'
-                var ScanStatusMessageTimes = 0;
-                var CheckScanStatusID = setInterval(() => {
-                    //clearInterval(CheckScanStatusID)
-                    var data = new FormData()
-                    data.append('oauthKey', res.data.data.oauthKey);
-                    const paramsList = new URLSearchParams(data)
-                    var config = {
-                        method: 'post',
-                        url: '/proxy/bilibili/passport/qrcode/getLoginInfo',
-                        data: paramsList,
-                        headers: { 'content-type': 'application/x-www-form-urlencoded' }
-                    };
+                    this.QrcodeValue = res.data.data.url
+                    this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>登录二维码获取成功</code></pre>'
+                    this.MockupCodeContent += ' <pre data-prefix="$"><code>正在从http://passport.bilibili.com/qrcode/getLoginInfo获取扫码状态...</code></pre>'
+                    this.MockupCodeContent += ' <pre data-prefix="$"><code>请使用哔哩哔哩客户端扫码登录</code></pre>'
+                    var ScanStatusMessageTimes = 0;
 
-                    axios.request(config)
-                        .then((res) => {
-                            switch (res.data.data) {
+                    var CheckScanStatusID = setInterval(() => {
 
-                                case -4:
-                                    this.ScanStatusMessage = "请使用哔哩哔哩客户端扫码登录";
+                        //clearInterval(CheckScanStatusID)
+                        var data = new FormData()
+                        data.append('oauthKey', res.data.data.oauthKey);
+                        const paramsList = new URLSearchParams(data)
+                        var config = {
+                            method: 'post',
+                            url: '/proxy/bilibili/passport/qrcode/getLoginInfo',
+                            data: paramsList,
+                            headers: { 'content-type': 'application/x-www-form-urlencoded' }
+                        };
 
-                                    break;
-                                case -5:
-                                    this.ScanStatusMessage = "扫码成功,请在手机登录";
-                                    if (ScanStatusMessageTimes == 0) {
-                                        this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>扫码成功,请在手机登录</code></pre>'
-                                        ScanStatusMessageTimes++
-                                    }
-                                    break;
-                            }
-                            if (res.data.status) {
-                                this.ScanSucceed = true
-                                this.ScanStatusMessage = "获取Cookie成功!请点击下方登录";
-                                this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取Cookie成功!请点击登录</code></pre>'
-                                clearInterval(CheckScanStatusID)
-                                var url = res.data.data.url
-                                this.SESSDATA = getQueryVariable(url, "SESSDATA")
-                                this.bili_jct = getQueryVariable(url, "bili_jct")
-                            }
-                        })
-                        .catch((err) => {
-                            this.ScanStatusMessage = err.response.data.message;
-                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>登录状态获取失败!</code></pre>'
-                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
-                            console.log(err.response.data) //错误信息
-                        })
+                        axios.request(config)
+                            .then((res) => {
+                                switch (res.data.data) {
 
-                }, 1000)
+                                    case -4:
+                                        this.ScanStatusMessage = "请使用哔哩哔哩客户端扫码登录";
+
+                                        break;
+                                    case -5:
+                                        this.ScanStatusMessage = "扫码成功,请在手机登录";
+                                        if (ScanStatusMessageTimes == 0) {
+                                            this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>扫码成功,请在手机登录</code></pre>'
+                                            ScanStatusMessageTimes++
+                                        }
+                                        break;
+                                }
+                                if (res.data.status) {
+                                    this.ScanSucceed = true
+                                    this.ScanStatusMessage = "获取Cookie成功!请点击下方登录";
+                                    this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取Cookie成功!请点击登录</code></pre>'
+                                    clearInterval(CheckScanStatusID)
+                                    var url = res.data.data.url
+                                    this.SESSDATA = getQueryVariable(url, "SESSDATA")
+                                    this.bili_jct = getQueryVariable(url, "bili_jct")
+                                }
+                            })
+                            .catch((err) => {
+                                this.ScanStatusMessage = err.response.data.message;
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>登录状态获取失败!</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                                console.log(err.response.data) //错误信息
+                            })
+
+                    }, 1000)
 
 
-            })
-            .catch((err) => {
-                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>登录二维码获取失败!</code></pre>'
-                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
-                console.log(err.response.data) //错误信息
-            })
+                })
+                .catch((err) => {
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>登录二维码获取失败!</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                    console.log(err.response.data) //错误信息
+                })
+        }
     },
     methods: {
         submitBILIForm() {
@@ -145,11 +168,10 @@ export default {
                 bili_jct = this.bili_jct
                 this.$cookies.set("SESSDATA", decodeURIComponent(SESSDATA))
                 this.$cookies.set("bili_jct", bili_jct)
-            }else if(this.$cookies.get("isLogin2Bili") == "true")
-            {
-                SESSDATA =this.$cookies.get("SESSDATA")
+            } else if (this.$cookies.get("isLogin2Bili") == "true") {
+                SESSDATA = this.$cookies.get("SESSDATA")
 
-                bili_jct =this.$cookies.get("bili_jct")
+                bili_jct = this.$cookies.get("bili_jct")
             }
             var data = new FormData()
             data.append('bucket', 'material_up');
@@ -189,7 +211,7 @@ export default {
                                         this.BiliDescribe = res.data.data.sign
                                         this.BiliLiveRoomID = res.data.data.live_room.roomid
                                         this.BiliLiveRoomCover = res.data.data.live_room.cover
-
+                                        this.CoverImg = res.data.data.live_room.cover
 
                                     })
                                     .catch((err) => {
@@ -261,6 +283,63 @@ export default {
                     this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
                     console.log(err.response.data) //错误信息
                 })
+
+        },
+        uploadLocalCover() {
+            this.ChooseFile.click()
+
+
+        },
+        LoadBase64CoverImg() {
+            if (this.WebCoverImgBase64 != "") {
+                this.CoverImg = this.WebCoverImgBase64
+                this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>读取图片BASE64成功:' + this.WebCoverImgBase64 + '</code></pre>'
+                this.CoverFile = base64ToFile(this.WebCoverImgBase64, "image")
+
+            }
+
+
+        },
+        uploadCover() {
+            var bili_jct = this.$cookies.get("bili_jct")
+            var data = new FormData()
+            data.append('bucket', 'material_up');
+            data.append('dir', '');
+            data.append('file', this.CoverFile);
+            data.append('csrf', bili_jct);
+            this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传封面至b站图床https://member.bilibili.com/x/material/up/upload</code></pre>'
+            axios.request({
+                method: 'post',
+                url: '/proxy/bilibili/member/x/material/up/upload',
+                data: data
+            })
+                .then((res) => {
+                    this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>上传图片到b站图床成功!:' + res.data.data.location + '</code></pre>'
+
+                })
+                .catch((err) => {
+                    console.log(err.response.data)
+                })
+
+        },
+
+        LoadFile() {
+            if (this.ChooseFile.files[0] != null) {
+                this.CoverFileName = this.ChooseFile.files[0].name
+                var file = this.ChooseFile.files[0]
+                this.CoverFile = this.ChooseFile.files[0]
+                var reader = new FileReader();
+                if (file) {
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        var base64 = reader.result;
+                        this.CoverImg = base64
+                        this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>读取本地图片成功:' + this.ChooseFile.files[0].name + '</code></pre>'
+                    }
+                }
+
+            }
+
 
         }
     },
@@ -443,23 +522,33 @@ export default {
                     items-center ">
 
                             <div class="card rounded-lg card-compact  bg-base-100 shadow-xl">
-                                <figure><img style="height:18rem ;width: 32rem;"
-                                        src="https://message.biliimg.com/bfs/im/4fda7c6d436290ecd6eec7cb66ff16df50fbb93e.webp"
-                                        alt="Shoes" /></figure>
+                                <figure>
+                                    <img style="height:18rem ;width: 32rem;" :src="CoverImg" />
+                                </figure>
                                 <div class="card-body">
 
                                     <div class="form-control">
                                         <div class="input-group">
-                                            <input type="text" placeholder="图片链接" class="input input-bordered w-full" />
-                                            <button class="btn btn-secondary">
-                                                读取网络图片
+                                            <input type="text" v-model="WebCoverImgBase64" placeholder="图片BASE64"
+                                                class="input input-bordered w-full" />
+                                            <button @click="LoadBase64CoverImg" class="btn btn-secondary">
+                                                读取BASE64图片
                                             </button>
 
                                         </div>
 
                                     </div>
                                     <div class="card-actions justify-end">
-                                        <button class="btn btn-primary">读取本地图片</button>
+
+
+                                        <div class="input-group">
+                                            <input type="text" v-model="CoverFileName" disabled
+                                                class="input input-bordered w-full" />
+                                            <input type="file" accept="image/webp,image/png" @change="LoadFile"
+                                                ref="ChooseFile" class="hidden" />
+                                            <button @click="uploadLocalCover" class="btn btn-primary">读取本地图片</button>
+
+                                        </div>
                                     </div>
 
                                 </div>
@@ -479,11 +568,13 @@ export default {
                                     <div class="form-control">
                                         <label class="cursor-pointer label">
                                             <span class="label-text">花费2枚硬币</span>
-                                            <input type="checkbox" class="checkbox checkbox-accent" />
+                                            <input checked="checked" disabled type="checkbox"
+                                                class="checkbox checkbox-accent" />
                                         </label>
                                         <label class="cursor-pointer label">
                                             <span class="label-text">为up主视频、动态点赞</span>
-                                            <input type="checkbox" class="checkbox checkbox-accent" />
+                                            <input checked="checked" disabled type="checkbox"
+                                                class="checkbox checkbox-accent" />
                                         </label>
                                         <label class="cursor-pointer label">
                                             <span class="label-text">分享到动态</span>
@@ -491,7 +582,7 @@ export default {
                                         </label>
                                     </div>
                                     <div class="card-actions justify-end">
-                                        <button class="btn btn-primary">上传封面</button>
+                                        <button @click="uploadCover" class="btn btn-primary">上传封面</button>
                                     </div>
 
 
