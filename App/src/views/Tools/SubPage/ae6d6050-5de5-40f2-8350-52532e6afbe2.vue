@@ -53,6 +53,8 @@ export default {
         }
     },
     mounted() {
+        if (this.$cookies.get("isLogin2Bili") == "true")
+            this.submitBILIForm()
         PubSub.publish('ChangeButtonStauts', "Index");
         PubSub.publish('ChangeLeftMenu', [
             {
@@ -76,8 +78,9 @@ export default {
                 this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>登录二维码获取成功</code></pre>'
                 this.MockupCodeContent += ' <pre data-prefix="$"><code>正在从http://passport.bilibili.com/qrcode/getLoginInfo获取扫码状态...</code></pre>'
                 this.MockupCodeContent += ' <pre data-prefix="$"><code>请使用哔哩哔哩客户端扫码登录</code></pre>'
+                var ScanStatusMessageTimes = 0;
                 var CheckScanStatusID = setInterval(() => {
-                    clearInterval(CheckScanStatusID)
+                    //clearInterval(CheckScanStatusID)
                     var data = new FormData()
                     data.append('oauthKey', res.data.data.oauthKey);
                     const paramsList = new URLSearchParams(data)
@@ -94,17 +97,20 @@ export default {
 
                                 case -4:
                                     this.ScanStatusMessage = "请使用哔哩哔哩客户端扫码登录";
-                                    
+
                                     break;
                                 case -5:
                                     this.ScanStatusMessage = "扫码成功,请在手机登录";
-                                    this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>扫码成功,请在手机登录</code></pre>'
+                                    if (ScanStatusMessageTimes == 0) {
+                                        this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>扫码成功,请在手机登录</code></pre>'
+                                        ScanStatusMessageTimes++
+                                    }
                                     break;
                             }
                             if (res.data.status) {
                                 this.ScanSucceed = true
                                 this.ScanStatusMessage = "获取Cookie成功!请点击下方登录";
-                                this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取Cookie成功!</code></pre>'
+                                this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取Cookie成功!请点击登录</code></pre>'
                                 clearInterval(CheckScanStatusID)
                                 var url = res.data.data.url
                                 this.SESSDATA = getQueryVariable(url, "SESSDATA")
@@ -132,25 +138,33 @@ export default {
     },
     methods: {
         submitBILIForm() {
-
-            if (this.AllowNonStore && this.AllowPolicy) {
-                var SESSDATA = this.SESSDATA
-                var bili_jct = this.bili_jct
-                SESSDATA = '8742238d%2C1674213185%2Cd3332*71'
-                bili_jct = '98b58494bc79a89ce81d5373382f52e5'
+            var SESSDATA
+            var bili_jct
+            if (this.SESSDATA != "" && this.bili_jct != "") {
+                SESSDATA = this.SESSDATA
+                bili_jct = this.bili_jct
                 this.$cookies.set("SESSDATA", decodeURIComponent(SESSDATA))
-                var data = new FormData()
-                data.append('bucket', 'material_up');
-                data.append('dir', '');
-                data.append('file', base64ToFile("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAADElEQVQImWNgYGAAAAAEAAGjChXjAAAAAElFTkSuQmCC", "test.png"));
-                data.append('csrf', bili_jct);
-                this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传空白图片至https://member.bilibili.com/x/material/up/upload,以测试SESSDATA和bili_jct是否有效</code></pre>'
-                axios.request({
-                    method: 'post',
-                    url: '/proxy/bilibili/member/x/material/up/upload',
-                    data: data
-                }).then((res) => {
+                this.$cookies.set("bili_jct", bili_jct)
+            }else if(this.$cookies.get("isLogin2Bili") == "true")
+            {
+                SESSDATA =this.$cookies.get("SESSDATA")
+
+                bili_jct =this.$cookies.get("bili_jct")
+            }
+            var data = new FormData()
+            data.append('bucket', 'material_up');
+            data.append('dir', '');
+            data.append('file', base64ToFile("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAADElEQVQImWNgYGAAAAAEAAGjChXjAAAAAElFTkSuQmCC", "test.png"));
+            data.append('csrf', bili_jct);
+            this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传空白图片至https://member.bilibili.com/x/material/up/upload,以测试SESSDATA和bili_jct是否有效</code></pre>'
+            axios.request({
+                method: 'post',
+                url: '/proxy/bilibili/member/x/material/up/upload',
+                data: data
+            })
+                .then((res) => {
                     if (res.data.code == 0 || res.data.code == 20414) {
+                        this.$cookies.set("isLogin2Bili", true)
                         this.isLogin2Bili = true
                         this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>登录成功!</code></pre>'
                         this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/web-interface/nav获取用户名、UID、头像、硬币数</code></pre>'
@@ -195,16 +209,21 @@ export default {
 
                                     })
                                     .catch((err) => {
+                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户视频数失败!</code></pre>'
+                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
                                         console.log(err.response.data) //错误信息
                                     })
 
                             })
                             .catch((err) => {
-                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户视频数失败!</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户名、UID、头像、硬币数失败!</code></pre>'
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
                                 console.log(err.response.data) //错误信息
                             })
+
+
                         this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/web-interface/nav/stat获取用户粉丝数、关注数、动态数</code></pre>'
                         axios.get('/proxy/bilibili/api/x/web-interface/nav/stat')
                             .then((res) => {
@@ -217,19 +236,32 @@ export default {
                                 this.BiliDynamicCount = res.data.data.dynamic_count
                             })
                             .catch((err) => {
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户粉丝数、关注数、动态数失败!</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
                                 console.log(err.response.data) //错误信息
                             })
                         this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取所有信息成功!</code></pre>'
                         console.log("登录成功")
+                    } else if (res.data.code == -101) {
+                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>SESSDATA填写有误或已过期</code></pre>'
+                        this.$cookies.set("isLogin2Bili", false)
+                        this.$cookies.remove("SESSDATA")
+                        this.$cookies.remove("bili_jct")
+                    } else if (res.data.code == -111) {
+                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>bili_jct填写有误或已过期</code></pre>'
+                        this.$cookies.set("isLogin2Bili", false)
+                        this.$cookies.remove("SESSDATA")
+                        this.$cookies.remove("bili_jct")
                     }
                 })
-                    .catch((err) => {
-                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户粉丝数、关注数、动态数失败!</code></pre>'
-                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
-                        console.log(err.response.data) //错误信息
-                    })
-            }
+                .catch((err) => {
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>检验SESSDATA和bili_jct失败!</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                    console.log(err.response.data) //错误信息
+                })
+
         }
     },
     components: {
@@ -248,7 +280,7 @@ export default {
         <div class=" rounded-lg sm:col-span-2">
 
 
-            <div class="flex flex-col h-full ">
+            <div style="overflow:scroll" class="flex flex-col h-full ">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4  ">
 
                     <div class="h-full flex flex-col 
@@ -310,7 +342,8 @@ export default {
                                         </label>
                                     </div>
                                     <div class="form-control mt-6">
-                                        <button class="btn btn-primary mb-4">登录</button>
+                                        <button :disabled="!AllowNonStore || !AllowPolicy"
+                                            class="btn btn-primary mb-4">登录</button>
                                     </div>
                                     <div v-if="!AllowPolicy" class="alert alert-warning shadow-lg mb-4">
                                         <div>
@@ -405,7 +438,7 @@ export default {
 
                     </div>
 
-                    <div class="flex flex-col h-full">
+                    <div class="flex  flex-col h-full">
                         <div class="h-full flex flex-col 
                     items-center ">
 
@@ -481,7 +514,7 @@ export default {
 
         </div>
 
-        <div class="bg-base-100 rounded-lg">
+        <div class="bg-base-100 rounded-lg h-full">
             <div class="hero rounded-lg min-h-full bg-base-100">
                 <div class="hero-content text-center">
                     <div class="max-w-md">
