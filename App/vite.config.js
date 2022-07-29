@@ -35,6 +35,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy\/bilibili\/live/, '')
       }
+      ,
+      '/api': {
+        target: 'http://127.0.0.1:8000/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
     }
   }
 })

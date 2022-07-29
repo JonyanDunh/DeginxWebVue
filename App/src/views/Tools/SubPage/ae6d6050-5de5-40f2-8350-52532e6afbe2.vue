@@ -67,7 +67,8 @@ export default {
             CoverImg: "https://message.biliimg.com/bfs/im/4fda7c6d436290ecd6eec7cb66ff16df50fbb93e.webp",
             CoverFileName: "",
             WebCoverImgBase64: "",
-            CoverFile: null
+            CoverFile: null,
+            UploadSuccess:false
 
         }
     },
@@ -315,6 +316,25 @@ export default {
             })
                 .then((res) => {
                     this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>上传图片到b站图床成功!:' + res.data.data.location + '</code></pre>'
+                    data = new FormData()
+                    data.append('csrf', bili_jct);
+                    data.append('cover', res.data.data.location);
+                    data.append('SESSDATA', this.$cookies.get("SESSDATA"));
+                    this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传封面至哔哩哔哩直播间</code></pre>'
+                    const paramsList = new URLSearchParams(data)
+                    axios.post('/api/tools/VideoWebSite/bilibili/uploadLiveDynamicCover', paramsList, {
+                        headers: { 'content-type': 'application/x-www-form-urlencoded' }
+                    }).then((res) => {
+                        console.log(res.data)
+                        this.MockupCodeContent += ' <pre class="text-success"  data-prefix="$"><code>上传动态封面成功!正在审核中,请进入直播间管理页面https://link.bilibili.com/p/center/index#/my-room/start-live查看</code></pre>'
+                        this.UploadSuccess=true
+                    })
+                        .catch((err) => {
+                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>上传动态封面失败!</code></pre>'
+                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.message + '</code></pre>'
+                            console.log(err.response.data) //错误信息
+                        })
 
                 })
                 .catch((err) => {
@@ -583,6 +603,18 @@ export default {
                                     </div>
                                     <div class="card-actions justify-end">
                                         <button @click="uploadCover" class="btn btn-primary">上传封面</button>
+                                        <div :hidden="!UploadSuccess" class="alert alert-success shadow-lg">
+                                            <div>
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>上传动态封面成功!</span>
+                                            </div>
+                                        </div>
                                     </div>
 
 
