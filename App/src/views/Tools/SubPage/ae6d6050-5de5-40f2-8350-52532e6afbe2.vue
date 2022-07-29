@@ -68,7 +68,9 @@ export default {
             CoverFileName: "",
             WebCoverImgBase64: "",
             CoverFile: null,
-            UploadSuccess:false
+            UploadSuccess: false,
+            DedeUserID: null,
+            DedeUserID__ckMd5: null
 
         }
     },
@@ -138,6 +140,8 @@ export default {
                                     var url = res.data.data.url
                                     this.SESSDATA = getQueryVariable(url, "SESSDATA")
                                     this.bili_jct = getQueryVariable(url, "bili_jct")
+
+                                    this.DedeUserID__ckMd5 = getQueryVariable(url, "DedeUserID__ckMd5")
                                 }
                             })
                             .catch((err) => {
@@ -161,6 +165,36 @@ export default {
         }
     },
     methods: {
+        Logout() {
+            var data = new FormData()
+            data.append('biliCSRF', this.$cookies.get("bili_jct"));
+            this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在调用http://passport.bilibili.com/login/exit/v2接口退出登录</code></pre>'
+            const paramsList = new URLSearchParams(data)
+            axios.post('/proxy/bilibili/passport/login/exit/v2', paramsList, {
+                headers: { 'content-type': 'application/x-www-form-urlencoded' }
+            }).then((res) => {
+                console.log(res.data)
+                this.MockupCodeContent += ' <pre class="text-success"  data-prefix="$"><code>退出成功!如不放心,请再次用您的Cookie尝试登录以验证是否退出账号或改密码</code></pre>'
+                this.MockupCodeContent += ' <pre   data-prefix="$"><code>您的Cookie如下:</code></pre>'
+                this.MockupCodeContent += ' <pre   data-prefix="$"><code>bili_jct:' + this.$cookies.get("bili_jct") + '</code></pre>'
+                this.MockupCodeContent += ' <pre   data-prefix="$"><code>SESSDATA(未uriencode):' + this.$cookies.get("SESSDATA") + '</code></pre>'
+                this.MockupCodeContent += ' <pre   data-prefix="$"><code>SESSDATA(已uriencode):' + encodeURIComponent(this.$cookies.get("SESSDATA")) + '</code></pre>'
+                this.MockupCodeContent += ' <pre   data-prefix="$"><code>DedeUserID:' + encodeURIComponent(this.$cookies.get("DedeUserID")) + '</code></pre>'
+                this.MockupCodeContent += ' <pre   data-prefix="$"><code>DedeUserID__ckMd5:' + encodeURIComponent(this.$cookies.get("DedeUserID__ckMd5")) + '</code></pre>'
+                this.$cookies.set("isLogin2Bili", false)
+                this.$cookies.remove("SESSDATA")
+                this.$cookies.remove("bili_jct")
+                this.$cookies.remove("DedeUserID")
+                this.$cookies.remove("DedeUserID__ckMd5")
+                this.isLogin2Bili = false
+            })
+                .catch((err) => {
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>上传动态封面失败!</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.message + '</code></pre>'
+                    console.log(err.response.data) //错误信息
+                })
+        },
         submitBILIForm() {
             var SESSDATA
             var bili_jct
@@ -169,6 +203,8 @@ export default {
                 bili_jct = this.bili_jct
                 this.$cookies.set("SESSDATA", decodeURIComponent(SESSDATA))
                 this.$cookies.set("bili_jct", bili_jct)
+                this.$cookies.set("DedeUserID__ckMd5", this.DedeUserID__ckMd5)
+
             } else if (this.$cookies.get("isLogin2Bili") == "true") {
                 SESSDATA = this.$cookies.get("SESSDATA")
 
@@ -202,6 +238,7 @@ export default {
                                 this.BiliCoins = res.data.data.money
                                 this.BiliUID = res.data.data.mid
                                 this.BiliAvatar = res.data.data.face
+                                this.$cookies.set("DedeUserID", res.data.data.mid)
                                 this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/space/acc/info?mid=' + this.BiliUID + '&jsonp=jsonp获取用户签名、直播房间号、直播间封面</code></pre>'
                                 axios.get('/proxy/bilibili/api/x/space/acc/info?mid=' + this.BiliUID + '&jsonp=jsonp')
                                     .then((res) => {
@@ -327,7 +364,7 @@ export default {
                     }).then((res) => {
                         console.log(res.data)
                         this.MockupCodeContent += ' <pre class="text-success"  data-prefix="$"><code>上传动态封面成功!正在审核中,请进入直播间管理页面https://link.bilibili.com/p/center/index#/my-room/start-live查看</code></pre>'
-                        this.UploadSuccess=true
+                        this.UploadSuccess = true
                     })
                         .catch((err) => {
                             this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>上传动态封面失败!</code></pre>'
@@ -528,7 +565,18 @@ export default {
 
                                 </div>
                                 <div class="card-actions justify-end">
-                                    <button class="btn btn-primary">退出登录</button>
+                                    <button @click="Logout" class="btn btn-primary">退出登录</button>
+                                    <div class="alert alert-warning shadow-lg">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                            </svg>
+                                            <span>对于二维码的登录,可以完全退出登录。对于手动输入Cookie的登录,只能清除本页面保存的Cookie,而无法根本退出账号!请从b站页面退出登录！</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -602,7 +650,7 @@ export default {
                                         </label>
                                     </div>
                                     <div class="card-actions justify-end">
-                                        <button @click="uploadCover" class="btn btn-primary">上传封面</button>
+                                        <button :disabled="!isLogin2Bili" @click="uploadCover" class="btn btn-primary">上传封面</button>
                                         <div :hidden="!UploadSuccess" class="alert alert-success shadow-lg">
                                             <div>
                                                 <svg xmlns="http://www.w3.org/2000/svg"
