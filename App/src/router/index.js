@@ -6,9 +6,20 @@ import ToolsView from '../views/Tools/ToolsView.vue'
 import ToolsItem from '../views/Tools/ToolsItem.vue'
 import VueCookies from 'vue-cookies'
 import BilibiliLiveDynamicCover from '../views/Tools/SubPage/ae6d6050-5de5-40f2-8350-52532e6afbe2.vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios';
+const route = useRoute()
 axios.defaults.crossDomain = true;
 axios.defaults.withCredentials = true;
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split("=");
+    if (pair[0] == variable) { return pair[1]; }
+  }
+  return (false);
+}
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -27,23 +38,29 @@ const router = createRouter({
       name: 'console',
       component: ConsoleView,
       meta: { transition: 'slide-right', requireAuth: true }
-    }, {
+    },
+    {
       path: '/tools',
       name: 'tools',
-      component: ToolsView,
-      meta: { transition: 'slide-right'}
+      component: () => {
+        console.log(getQueryVariable("ItemUUID"))
+        if (getQueryVariable("ItemUUID") == false || getQueryVariable("ItemUUID") == ""|| getQueryVariable("ItemUUID") == null)
+          return ToolsView
+        else
+          return import(`../views/Tools/SubPage/${getQueryVariable("ItemUUID")}.vue`)
+      },
+      meta: { transition: 'slide-right' }
     }, {
       path: '/tools/ae6d6050-5de5-40f2-8350-52532e6afbe2',
       name: 'BilibiliLiveDynamicCover',
       component: BilibiliLiveDynamicCover,
-      meta: { transition: 'slide-right'}
+      meta: { transition: 'slide-right' }
 
     }
+
   ],
 })
 router.beforeEach((to, from, next) => {
-
-
   if (to.meta.requireAuth) {
     if (VueCookies.get("is_login") == 'true') {
       next()

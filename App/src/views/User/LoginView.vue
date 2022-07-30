@@ -20,7 +20,7 @@ export default {
   methods: {
     submitForm() {
       const paramsList = new URLSearchParams(new FormData(document.getElementById("loginForm")))
-      axios.post('http://127.0.0.1:8000/api/account/login/', paramsList, {
+      axios.post('/api/account/login/', paramsList, {
         headers: { 'content-type': 'application/x-www-form-urlencoded' }
       }).then((res) => {
         this.$GLOBAL.user = res.data.data

@@ -53,7 +53,7 @@ export default {
 <template  >
 
   <div class="video-box">
-    <video class="video-background" preload="auto" loop playsinline autoplay src="video/welcome.mp4" tabindex="-1"
+    <video class="video-background" preload="auto" loop playsinline autoplay src="" tabindex="-1"
       muted="muted"></video>
     <div class="hero min-h-screen">
       <div class="hero-overlay bg-opacity-70"></div>

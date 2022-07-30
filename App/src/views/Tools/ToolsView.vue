@@ -8,7 +8,7 @@ export default {
 
     mounted() {
         try {
-            axios.get('http://127.0.0.1:8000/api/tools/get')
+            axios.get('/api/tools/get')
                 .then((res) => {
                     this.ToolsItems["all"] = []
                     for (var data of res.data.data) {
@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         UseTool(ItemUUID) {
-            this.$router.push('/tools/'+ItemUUID)
+            this.$router.push('/tools?ItemUUID='+ItemUUID)
                 
         },
     }
