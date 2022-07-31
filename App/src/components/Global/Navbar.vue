@@ -3,7 +3,7 @@ import PubSub from 'pubsub-js'
 import { onMounted, ref } from 'vue'
 import axios from 'axios';
 axios.defaults.crossDomain = true;
-axios.defaults.withCredentials  = true;
+axios.defaults.withCredentials = true;
 
 
 export default {
@@ -76,32 +76,31 @@ export default {
       this.$cookies.set("is_login", true)
 
     });
-    try {
+    if (this.$cookies.get("is_login") == "true") {
       axios.get('/api/account/user/')
-        .then((res) => {
-          this.$GLOBAL.user = res.data.data
-          this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
-          this.AvatarUrl = res.data.data.avatar
-          this.$cookies.set("is_login", true)
-        })
-        .catch((err) => {
-          if (err.response.data.code == 401) {
-            this.$cookies.set("is_login", false)
-            console.log(err.response.data.data)
-          } else {
-            console.log(err.response.data)
+      .then((res) => {
+        this.$GLOBAL.user = res.data.data
+        this.AvatarMenuItems = [{ ItemName: res.data.data.username, ItemKey: 0 }, { ItemName: "Logout", ItemKey: 2 }]
+        this.AvatarUrl = res.data.data.avatar
+        //this.$cookies.set("is_login", true)
+      })
+      .catch((err) => {
+        if (err.response.data.code == 401) {
+          this.$cookies.set("is_login", false)
+          console.log(err.response.data.data)
+        } else {
+          console.log(err.response.data)
 
-          }
-        })
-    } catch (err) {
-      //处理错误
+        }
+      })
     }
+
+
   },
 
   methods: {
     selectTime(e) {
       //给点击选中的按钮添加选中效果
-      console.log(e.currentTarget)
       e.currentTarget.classList.add("btn-active");
       //判断是否重复点击
       if (e.currentTarget !== this.beforeTarget) {
@@ -159,7 +158,7 @@ export default {
     </div>
     <div class="flex-1">
 
-      <a class="btn btn-ghost normal-case text-xl ">DeginX</a>
+      <a v-on:click="totools" class="btn btn-ghost normal-case text-xl ">DeginX</a>
     </div>
     <div class="flex-none gap-2">
       <button class="btn btn-ghost btn-circle hidden">
@@ -176,7 +175,7 @@ export default {
         class="btn btn-ghost hidden sm:block">工具</button>
       <button @click="selectTime($event)" ref="PluginButton" class="btn btn-ghost hidden ">插件</button>
       <button @click="selectTime($event)" ref="OpenPlatformButton" class="btn btn-ghost hidden ">开放平台</button>
-      <button @click="selectTime($event)" ref="DocumentButton" class="btn btn-ghost hidden sm:block">文档</button>
+      <button @click="selectTime($event)" ref="DocumentButton" class="btn btn-ghost hidden  ">文档</button>
       <button @click="selectTime($event)" ref="AboutButton" class="btn btn-ghost hidden ">关于</button>
       <!--       <button class="btn btn-ghost btn-circle hidden sm:block">
         <div class="indicator">
@@ -191,7 +190,7 @@ export default {
         控制台
       </button>
 
-      <div class="dropdown dropdown-end">
+      <div class="dropdown dropdown-end hidden">
         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
             <img :src="AvatarUrl" />

@@ -26,7 +26,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'welcome',
-      component: WelcomeView,
+      component: ToolsView,
       meta: { transition: 'slide-left' }
     }, {
       path: '/login',
@@ -42,16 +42,17 @@ const router = createRouter({
     {
       path: '/tools',
       name: 'tools',
-      component: () => {
+      /*component: () => {
         console.log(getQueryVariable("ItemUUID"))
         if (getQueryVariable("ItemUUID") == false || getQueryVariable("ItemUUID") == ""|| getQueryVariable("ItemUUID") == null)
           return ToolsView
         else
           return import(`../views/Tools/SubPage/${getQueryVariable("ItemUUID")}.vue`)
-      },
+      },*/
+      component:ToolsView,
       meta: { transition: 'slide-right' }
     }, {
-      path: '/tools/ae6d6050-5de5-40f2-8350-52532e6afbe2',
+      path: '/tools-ae6d6050-5de5-40f2-8350-52532e6afbe2',
       name: 'BilibiliLiveDynamicCover',
       component: BilibiliLiveDynamicCover,
       meta: { transition: 'slide-right' }

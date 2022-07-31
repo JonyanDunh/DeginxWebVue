@@ -6,6 +6,7 @@ import { onMounted, ref } from 'vue'
 axios.defaults.crossDomain = true;
 axios.defaults.withCredentials = true;
 
+var ApiSite = ""
 function base64ToFile(base64, fileName) {
     let arr = base64.split(",");
     let mime = arr[0].match(/:(.*?);/)[1];
@@ -84,17 +85,21 @@ export default {
                 ItemKey: 0
             },
             {
-                ItemName: "清除cookie",
+                ItemName: "UP主页",
                 ItemKey: 1
             },
             {
-                ItemName: "联系开发人员",
+                ItemName: "加入交流群",
                 ItemKey: 2
+            },
+            {
+                ItemName: "联系开发人员",
+                ItemKey: 3
             }]);
         PubSub.publish('ChangeLeftMenuItemStauts', 0);
-        if (this.$cookies.get("isLogin2Bili") == "false") {
+        if (this.$cookies.get("isLogin2Bili") == "false" || this.$cookies.get("isLogin2Bili") == null) {
             this.MockupCodeContent += ' <pre data-prefix="$"><code>正在从http://passport.bilibili.com/qrcode/getLoginUrl获取登录二维码</code></pre>'
-            axios.get('/proxy/bilibili/passport/qrcode/getLoginUrl')
+            axios.get(ApiSite + '/proxy/bilibili/passport/qrcode/getLoginUrl')
                 .then((res) => {
 
                     this.QrcodeValue = res.data.data.url
@@ -111,7 +116,7 @@ export default {
                         const paramsList = new URLSearchParams(data)
                         var config = {
                             method: 'post',
-                            url: '/proxy/bilibili/passport/qrcode/getLoginInfo',
+                            url: ApiSite + '/proxy/bilibili/passport/qrcode/getLoginInfo',
                             data: paramsList,
                             headers: { 'content-type': 'application/x-www-form-urlencoded' }
                         };
@@ -170,7 +175,7 @@ export default {
             data.append('biliCSRF', this.$cookies.get("bili_jct"));
             this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在调用http://passport.bilibili.com/login/exit/v2接口退出登录</code></pre>'
             const paramsList = new URLSearchParams(data)
-            axios.post('/proxy/bilibili/passport/login/exit/v2', paramsList, {
+            axios.post(ApiSite + '/proxy/bilibili/passport/login/exit/v2', paramsList, {
                 headers: { 'content-type': 'application/x-www-form-urlencoded' }
             }).then((res) => {
                 console.log(res.data)
@@ -218,7 +223,7 @@ export default {
             this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传空白图片至https://member.bilibili.com/x/material/up/upload,以测试SESSDATA和bili_jct是否有效</code></pre>'
             axios.request({
                 method: 'post',
-                url: '/proxy/bilibili/member/x/material/up/upload',
+                url: ApiSite + '/proxy/bilibili/member/x/material/up/upload',
                 data: data
             })
                 .then((res) => {
@@ -227,7 +232,7 @@ export default {
                         this.isLogin2Bili = true
                         this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>登录成功!</code></pre>'
                         this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/web-interface/nav获取用户名、UID、头像、硬币数</code></pre>'
-                        axios.get('/proxy/bilibili/api/x/web-interface/nav')
+                        axios.get(ApiSite + '/proxy/bilibili/api/x/web-interface/nav')
                             .then((res) => {
                                 this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取成功!信息如下:</code></pre>'
                                 this.MockupCodeContent += ' <pre  data-prefix="$"><code>username:' + res.data.data.uname + '</code></pre>'
@@ -240,7 +245,7 @@ export default {
                                 this.BiliAvatar = res.data.data.face
                                 this.$cookies.set("DedeUserID", res.data.data.mid)
                                 this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/space/acc/info?mid=' + this.BiliUID + '&jsonp=jsonp获取用户签名、直播房间号、直播间封面</code></pre>'
-                                axios.get('/proxy/bilibili/api/x/space/acc/info?mid=' + this.BiliUID + '&jsonp=jsonp')
+                                axios.get(ApiSite + '/proxy/bilibili/api/x/space/acc/info?mid=' + this.BiliUID + '&jsonp=jsonp')
                                     .then((res) => {
                                         this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取成功!信息如下:</code></pre>'
                                         this.MockupCodeContent += ' <pre  data-prefix="$"><code>sign:' + res.data.data.sign + '</code></pre>'
@@ -259,7 +264,7 @@ export default {
                                         console.log(err.response.data) //错误信息
                                     })
                                 this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/space/navnum?mid=' + this.BiliUID + '获取用户视频数</code></pre>'
-                                axios.get('/proxy/bilibili/api/x/space/navnum?mid=' + this.BiliUID)
+                                axios.get(ApiSite + '/proxy/bilibili/api/x/space/navnum?mid=' + this.BiliUID)
                                     .then((res) => {
                                         this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取成功!信息如下:</code></pre>'
                                         this.MockupCodeContent += ' <pre  data-prefix="$"><code>video count:' + res.data.data.video + '</code></pre>'
@@ -285,7 +290,7 @@ export default {
 
 
                         this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/web-interface/nav/stat获取用户粉丝数、关注数、动态数</code></pre>'
-                        axios.get('/proxy/bilibili/api/x/web-interface/nav/stat')
+                        axios.get(ApiSite + '/proxy/bilibili/api/x/web-interface/nav/stat')
                             .then((res) => {
                                 this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取成功!信息如下:</code></pre>'
                                 this.MockupCodeContent += ' <pre  data-prefix="$"><code>fans:' + res.data.data.follower + '</code></pre>'
@@ -348,7 +353,7 @@ export default {
             this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传封面至b站图床https://member.bilibili.com/x/material/up/upload</code></pre>'
             axios.request({
                 method: 'post',
-                url: '/proxy/bilibili/member/x/material/up/upload',
+                url: ApiSite + '/proxy/bilibili/member/x/material/up/upload',
                 data: data
             })
                 .then((res) => {
@@ -359,7 +364,7 @@ export default {
                     data.append('SESSDATA', this.$cookies.get("SESSDATA"));
                     this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在上传封面至哔哩哔哩直播间</code></pre>'
                     const paramsList = new URLSearchParams(data)
-                    axios.post('/api/tools/VideoWebSite/bilibili/uploadLiveDynamicCover', paramsList, {
+                    axios.post(ApiSite + '/api/tools/VideoWebSite/bilibili/uploadLiveDynamicCover', paramsList, {
                         headers: { 'content-type': 'application/x-www-form-urlencoded' }
                     }).then((res) => {
                         console.log(res.data)
@@ -634,23 +639,31 @@ export default {
                                         <span class="label-text text-2xl">直播间动态封面上传</span>
                                     </label>
                                     <div class="form-control">
+
                                         <label class="cursor-pointer label">
-                                            <span class="label-text">花费2枚硬币</span>
+                                            <span class="label-text">为up主5个视频点赞</span>
                                             <input checked="checked" disabled type="checkbox"
                                                 class="checkbox checkbox-accent" />
                                         </label>
                                         <label class="cursor-pointer label">
-                                            <span class="label-text">为up主视频、动态点赞</span>
+                                            <span class="label-text">为up主5个视频投币（花费10枚硬币）</span>
                                             <input checked="checked" disabled type="checkbox"
                                                 class="checkbox checkbox-accent" />
                                         </label>
                                         <label class="cursor-pointer label">
-                                            <span class="label-text">分享到动态</span>
-                                            <input type="checkbox" class="checkbox checkbox-accent" />
+                                            <span class="label-text">收藏up主5个视频</span>
+                                            <input checked="checked" disabled type="checkbox"
+                                                class="checkbox checkbox-accent" />
+                                        </label>
+                                        <label class="cursor-pointer label">
+                                            <span class="label-text">关注UP主</span>
+                                            <input checked="checked" disabled type="checkbox"
+                                                class="checkbox checkbox-accent" />
                                         </label>
                                     </div>
                                     <div class="card-actions justify-end">
-                                        <button :disabled="!isLogin2Bili" @click="uploadCover" class="btn btn-primary">上传封面</button>
+                                        <button :disabled="!isLogin2Bili" @click="uploadCover"
+                                            class="btn btn-primary">上传封面</button>
                                         <div :hidden="!UploadSuccess" class="alert alert-success shadow-lg">
                                             <div>
                                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -687,11 +700,8 @@ export default {
 
         <div class="bg-base-100 rounded-lg h-full">
             <div class="hero rounded-lg min-h-full bg-base-100">
-                <div class="hero-content text-center">
-                    <div class="max-w-md">
-                        <h1 class="text-5xl font-bold">这里是文档</h1>
-                    </div>
-                </div>
+                <iframe class="rounded-lg" loading="lazy" src="http://d2oa7ib7pm9cc3.cloudfront.net/" width="100%"
+                    height="100%"></iframe>
             </div>
         </div>
     </div>

@@ -14,7 +14,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/proxy/bilibili/api': {
+      /*'/proxy/bilibili/api': {
         target: 'http://api.bilibili.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy\/bilibili\/api/, '')
@@ -35,13 +35,30 @@ export default defineConfig({
         target: 'http://api.live.bilibili.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy\/bilibili\/live/, '')
+      },*/
+
+
+
+      '/proxy/bilibili/api': {
+        target: 'https://t0ufn27dwf.execute-api.ap-southeast-1.amazonaws.com',
+        changeOrigin: true
+
+      },
+      '/proxy/bilibili/member': {
+        target: 'https://t0ufn27dwf.execute-api.ap-southeast-1.amazonaws.com',
+        changeOrigin: true
       }
-      /*,
+      ,
+      '/proxy/bilibili/passport': {
+        target: 'https://t0ufn27dwf.execute-api.ap-southeast-1.amazonaws.com',
+        changeOrigin: true
+      }
+      ,
       '/api': {
-        target: 'http://127.0.0.1:8000/api',
+        target: 'http://127.0.0.1:8000/api/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
-      }*/
+      }
     }
   },
   build: {

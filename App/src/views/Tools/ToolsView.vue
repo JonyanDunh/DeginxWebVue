@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         UseTool(ItemUUID) {
-            this.$router.push('/tools?ItemUUID='+ItemUUID)
+            this.$router.push('/tools-'+ItemUUID)
                 
         },
     }
