@@ -153,7 +153,7 @@ export default {
                                 this.ScanStatusMessage = err.response.data.message;
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>登录状态获取失败!</code></pre>'
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                                 console.log(err.response.data) //错误信息
                             })
 
@@ -164,7 +164,7 @@ export default {
                 .catch((err) => {
                     this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>登录二维码获取失败!</code></pre>'
                     this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                     console.log(err.response.data) //错误信息
                 })
         }
@@ -260,7 +260,7 @@ export default {
                                     .catch((err) => {
                                         this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户签名、直播房间号、直播间封面失败!</code></pre>'
                                         this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                                         console.log(err.response.data) //错误信息
                                     })
                                 this.MockupCodeContent += ' <pre  data-prefix="$"><code>正在从https://api.bilibili.com/x/space/navnum?mid=' + this.BiliUID + '获取用户视频数</code></pre>'
@@ -276,7 +276,7 @@ export default {
                                     .catch((err) => {
                                         this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户视频数失败!</code></pre>'
                                         this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                                        this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                                         console.log(err.response.data) //错误信息
                                     })
 
@@ -284,7 +284,7 @@ export default {
                             .catch((err) => {
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户名、UID、头像、硬币数失败!</code></pre>'
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                                 console.log(err.response.data) //错误信息
                             })
 
@@ -303,7 +303,7 @@ export default {
                             .catch((err) => {
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>获取用户粉丝数、关注数、动态数失败!</code></pre>'
                                 this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                                this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                                 console.log(err.response.data) //错误信息
                             })
                         this.MockupCodeContent += ' <pre class="text-success" data-prefix="$"><code>获取所有信息成功!</code></pre>'
@@ -323,7 +323,7 @@ export default {
                 .catch((err) => {
                     this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>检验SESSDATA和bili_jct失败!</code></pre>'
                     this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data + '</code></pre>'
+                    this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                     console.log(err.response.data) //错误信息
                 })
 
@@ -374,7 +374,7 @@ export default {
                         .catch((err) => {
                             this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>上传动态封面失败!</code></pre>'
                             this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>失败信息如下：</code></pre>'
-                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.message + '</code></pre>'
+                            this.MockupCodeContent += ' <pre class="bg-error text-error-content" data-prefix="$"><code>' + err.response.data.data + '</code></pre>'
                             console.log(err.response.data) //错误信息
                         })
 
@@ -700,7 +700,7 @@ export default {
 
         <div class="bg-base-100 rounded-lg h-full">
             <div class="hero rounded-lg min-h-full bg-base-100">
-                <iframe class="rounded-lg" loading="lazy" src="http://d2oa7ib7pm9cc3.cloudfront.net/" width="100%"
+                <iframe class="rounded-lg" loading="lazy" src="https://d2oa7ib7pm9cc3.cloudfront.net/" width="100%"
                     height="100%"></iframe>
             </div>
         </div>
